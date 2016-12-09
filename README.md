@@ -22,11 +22,21 @@ The two easiest ways to get up and running are:
 Use Docker:
 
 ```
-git clone <this repo>
-cd rbfs
+git clone http://github.com/cidrblock/rbfs
+cd rbfs && mkdir tempdir && mkdir rootdir
 docker build -t rbfs .
 docker run -p 8080:8080 --rm -it rbfs
 ```
+
+or straight node
+
+```
+git clone http://github.com/cidrblock/rbfs
+cd rbfs && mkdir tempdir && mkdir rootdir
+npm install
+node server.js
+
+
 
 USe docker
 

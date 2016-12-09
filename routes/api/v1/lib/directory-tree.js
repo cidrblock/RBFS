@@ -21,10 +21,9 @@ function directoryTree (urlBase, base, path) {
 	if (stats.isFile()) {
 		const ext = PATH.extname(path).toLowerCase();
     if (!settings.includeHistoryFiles
-      && item.name.endsWith(settings.historyExtention){
+      && item.name.endsWith(settings.historyExtention)) {
         return null;
       }
-		//if (ext && extensions && extensions.length && extensions.indexOf(ext) != -1) return null;
 		item.size = stats.size;  // File size in bytes
     item.humanSize = filesize(stats.size);
 		item.extension = ext;
