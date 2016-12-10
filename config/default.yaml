@@ -36,7 +36,7 @@ cmode: "0755"
 
 # DNS servers for metadata lookups
 dnsServers:
-  - 10.255.0.27
+  - 8.8.8.8
 
 # The extention to add to the history files
 historyExtention: .history.json
