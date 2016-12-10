@@ -1,6 +1,4 @@
-# RBFS
-
-REST based file-server
+# RBFS (REST based file-server)
 
 RBFS provides a RESTful, JSON based, interface to a file system.
 
@@ -8,12 +6,15 @@ Highlights:
 
 - Confirm file integrity with MD5 checking.
 - Store user defined meta-data along with the files.
-- Automatically builds directory necessary directory structure.
-- HTTP basic support.
+- Tracks file change and MD5 history
+- Automatically builds necessary directory structure.
+- HTTP basic authentication support.
 - IP whitelisting or blacklisting.
 - Store and retrieve the history of file changes.
 - File vs. directory action detection.
 - Automatic mimetype header setting based on extention.
+- SSL support
+- Records source IP and DNS name.
 
 
 ## Getting Started
@@ -41,7 +42,7 @@ node server.js
 
 ## Examples
 
-These examples all use [httpie](https://httpie.org/)
+These examples all use [httpie](https://httpie.org/).
 
 ### Example from linux:
 - Create and PUT a file in arbitrary folder
@@ -70,7 +71,7 @@ X-Powered-By: Express
 }
 ```
 
-See the history
+#### See the history
 
 ```
 bash-4.3$ http -a admin:changeme http://localhost:8080/api/v1/history/some/nested/directory/1G
@@ -100,7 +101,7 @@ X-Powered-By: Express
 ]
 ```
 
-Get the MD5
+#### Get the MD5
 
 ```
 bash-4.3$ http -a admin:changeme http://localhost:8080/api/v1/md5/some/nested/directory/1G
@@ -120,7 +121,7 @@ X-Powered-By: Express
 }
 ```
 
-Get a directory listing
+#### Get a directory listing
 
 ```
 bash-4.3$ http -a admin:changeme http://localhost:8080/api/v1/
@@ -189,179 +190,164 @@ X-Powered-By: Express
 }
 ```
 
+#### Delete it all:
+
+```
+bash-4.3$ http -a admin:changeme DELETE http://localhost:8080/api/v1/
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 38
+Content-Type: application/json; charset=utf-8
+Date: Sat, 10 Dec 2016 00:08:46 GMT
+ETag: W/"26-IaA8q5+qekcb2RemoCWbIQ"
+X-Powered-By: Express
+
+{
+    "data": "Deleted.",
+    "status": "success"
+}
+```
+
+### Example from a network device:
+
+- copy the running config to a file
+
+```
+ios#copy run ios.cfg
+Destination filename [ios.cfg]?
+
+34824 bytes copied in 2.120 secs (16426 bytes/sec)
+ios#
+```
 
 
+#### Get the MD5
 
-USe docker
+```
+ios#verify /md5 ios.cfg
+.........Done!
+verify /md5 (flash:ios.cfg) = 7c0f5c0733cf766f004bb33470ac87f1
 
-RBFS provides a single-file `server.js` node controller with 2 core dependencies -
-* [Restify](http://mcavage.github.io/node-restify)
-* [node-fs-extra](https://github.com/jprichardson/node-fs-extra). The file contains a `config` object which allows for easy configuration.
-* [md5-file](https://www.npmjs.com/package/md5-file) Calculates an MD5 for the saved file.
+```
 
-### Installation
+#### Copy it to RBFS
 
-MacOS: `npm install --no-optional`
+```
+ios#copy ios.cfg http://admin:changeme@10.13.214.241:8080/api/v1/configurations/ios.cfg
+Address or name of remote host [10.13.214.241]?
+Destination filename [api/v1/configurations/ios.cfg]?
+Storing http://**************@10.13.214.241:8080/api/v1/configurations/ios.cfg !
+34824 bytes copied in 4.812 secs (7237 bytes/sec)
+```
+
+#### Retrieve the MD5
+
+```
+ios#copy http://admin:changeme@10.13.214.241:8080/api/v1/md5/configurations/ios.cfg ios.cfg.md5
+Destination filename [ios.cfg.md5]?
+Loading http://**************@10.13.214.241:8080/api/v1/md5/configurations/ios.cfg
+70 bytes copied in 0.532 secs (132 bytes/sec)
+ios#more ios.cfg.md5
+{"status":"success","data":{"md5":"7c0f5c0733cf766f004bb33470ac87f1"}}
+```
+
+#### Visually compare
+
+match: (upload was successful)
+
+#### Get the directory Listing
+
+```
+ios#copy http://admin:changeme@10.13.214.241:8080/api/v1/configurations/ dirlist.json
+Source filename [api/v1/configurations/]?
+Destination filename [dirlist.json]?
+Loading http://**************@10.13.214.241:8080/api/v1/configurations/ !
+522 bytes copied in 0.516 secs (1012 bytes/sec)
+ios#more dirlist.json
+{"status":"success","data":{"path":"/configurations/","name":"configurations","modified":"2016-12-10T00:26:25.000Z","type":"directory","children":[{"path":"/configurations/ios.cfg","name":"ios.cfg","modified":"2016-12-10T00:26:25.000Z","size":34824,"humanSize":"34.01 KB","extension":".cfg","url":"http://10.13.214.241:8080/api/v1/configurations/ios.cfg","history":"http://10.13.214.241:8080/api/v1/history/configurations/ios.cfg","type":"file","mimeType":"application/octet-stream"}],"size":34824,"humanSize":"34.01 KB"}}
+ios#
+```
+
+#### Get the history
+
+```
+
+ios#$/admin:changeme@10.13.214.241:8080/api/v1/history/configurations/ios.cfg ios.cfg.history
+Destination filename [ios.cfg.history]?
+Loading http://**************@10.13.214.241:8080/api/v1/history/configurations/ios.cfg
+277 bytes copied in 1.244 secs (223 bytes/sec)
+ios#more ios.cfg.history
+[{"action":"created","size":34824,"humanSize":"34.01 KB","md5":"7c0f5c0733cf766f004bb33470ac87f1","md5ValidationRequested":false,"md5Validated":false,"modified":"2016-12-10T00:26:25.000Z","sourceIP":"10.0.250.4","sourceDNSName":"xxx.yyy.zzz","userData":{}}]
+ios#
+
+```
+
+### Load it back to running-config
+
+```
+ios#copy http://admin:changeme@10.13.214.241:8080/api/v1/configurations/ios.cfg running-config
+Destination filename [running-config]?
+Loading http://**************@10.13.214.241:8080/api/v1/configurations/ios.cfg !
+34824 bytes copied in 14.016 secs (2485 bytes/sec)
+ios#
+```
 
 ### Security
 
 The server provides 3 levels of security:
 
-1. Key-Based: Each request requires a key be submitted in the URL
-2. IP Restrictions: Supports specific IP addresses and ranges using wildcards (`*`)
+1. HTTP-Basic: Each request requires a username/password be submitted.
+2. IP Restrictions: Supports specific IP addresses and ranges. White or black list.
 3. HTTPS Support: Simply supplying a PEM-encoded key and certificate file will require HTTPS requests
 
 ### Configuration
 
-The server uses a `config` object to easily setup how it will run:
+The server uses a settings.yaml file to easily setup how it will run:
 
-**Keys**
+`config/settings.yaml`
 
-The `config.keys` array simply contains a list of keys that get sent along with the request.
+The settings file is documented with the possible values.
 
-**IP Restrictions**
+### API guide
 
-The `config.ips` array allows providing a list of allowed IP addresses and ranges. Several format examples are:
+#### GET
 
-```
-"*.*.*.*"      // Allow all IP's through
-"192.168.*.*"  // Allow only IP's on the 192.168.(...) range to make requests
-"192.168.1.1"  // Allow only the specific address to make requests
-```
+**File (returns the contents of the file)**
 
-**SSL Certificate**
+GET http://localhost:8080/api/v1/some/dir/file.txt
 
-An SSL Certificate can be supplied by providing a PEM-encoded `key` and `cert`. Setting either or both of these properties to `false` results in no SSL.
+**Directory (returns a json directory listing)**
 
-**Port**
+GET http://localhost:8080/api/v1/some/dir/
 
-The `config.port` property sets the server port to be used.
+**History (returns the history of a file)**
 
-**Base Directory**
+GET http://localhost:8080/api/v1/history/some/dir/file.txt
 
-The `config.base` property sets the base (or root) directory where files will reside. This is relative to the server file.
+**MD5 (return the MD5 hash for a file)**
 
-**Create Mode**
+GET http://localhost:8080/api/v1/md5/some/dir/file.txt
 
-The `config.cmode` sets the permissions that will be applied on file creation. Default is `0755`.
+#### POST/PUT (same behavior)
 
-## Usage
+**File (pushes a file to RBFS)**
 
-Requests to the server are made via RESTful methods - GET, PUT, POST and DELETE. Below is a breakdown of the methods and their associated methods:
+PUT/POST http://localhost:8080/api/v1/some/dir/file.txt
 
-### GET (Read)
+form fields:
+- file: the file
+- xxxx:  any userdata to be saved
 
-**Directory Listing**
+**Directory (creates a directory)**
 
-`GET => {server}:{port}/{key}/dir/{path}`
+PUT/POST http://localhost:8080/api/v1/some/dir/
 
-**Read File**
+#### DELETE
 
-`GET => {server}:{port}/{key}/file/{path}`
+**File (also deletes the history)**
 
-### POST (Create)
+DELETE http://localhost:8080/api/v1/some/dir/file.txt
 
-**Create Directory**
+**Directory (removes directories and all contents)**
 
-`POST => {server}:{port}/{key}/dir/{path}`
-
-**Create File**
-
-`POST => {server}:{port}/{key}/file/{path}`
-
-
-Examples:
-
-Create an empty file:
-
-```
-curl -X POST  localhost:8080/12345/file/foo.txt
-```
-
-Create a file with a file: (MD5 hash returned for saved file)
-
-```
-$ md5 foo.txt
-MD5 (foo.txt) = 3b1340c072317b95529b826b6696c6ab
-$ curl -X POST  -F filedata=@foo.txt localhost:8080/12345/file/foo.txt
-{"status":"success","data":"3b1340c072317b95529b826b6696c6ab"}
-```
-
-Create a file with text
-
-```
-curl -X POST -F data='{"some": "text"}' localhost:8080/12345/file/foo.txt
-```
-
-**Copy Directory or File**
-
-`POST => {server}:{port}/{key}/copy/{path}`
-
-`POST` parameter `destination` required with the FULL detination path
-
-### PUT (Update)
-
-**Rename File or Directory**
-
-`PUT => {server}:{port}/{key}/rename/{path}`
-
-`PUT` parameter `name` required with the new file or directory name (no path required)
-
-**Save Contents to File**
-
-`PUT => {server}:{port}/{key}/file/{path}`
-
-Examples:
-
-Update file with file:
-
-```
-$ md5 foo.txt
-MD5 (foo.txt) = 3b1340c072317b95529b826b6696c6ab
-$ curl -X PUT -F filedata=@foo.txt localhost:8080/12345/file/foo.txt
-{"status":"success","data":"3b1340c072317b95529b826b6696c6ab"}
-```
-Update file with text:
-
-```
-curl -X PUT -F data='{"some": "text"}' localhost:8080/12345/file/foo.txt
-{"status":"success","data":null}
-```
-
-### DELETE
-
-**Delete a File or Directory**
-
-`DELETE => {server}:{port}/{key}/{path}`
-
-## Responses
-
-### Authentication Failure
-
-All authentication failures will result in an http 401 status (Not Authorized)
-
-### Success Response
-
-On a successful request the server will respond with the following JSON formatted return:
-
-```
-{
-  "status": "success",
-  "data": "{any return data}"
-}
-```
-
-Most successful responses will contain `null` for data.
-
-### Error Response
-
-On an erroroneous request the server will respond with the following JSON formatted return:
-
-```
-{
-  "status": "error",
-  "code": "{3-digit error response code}",
-  "message": "{brief explanation of error condition}",
-  "raw": "{raw error message from node}"
-}
-```
+DELETE http://localhost:8080/api/v1/some/dir/
