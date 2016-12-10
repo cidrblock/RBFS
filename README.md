@@ -351,3 +351,9 @@ DELETE http://localhost:8080/api/v1/some/dir/file.txt
 **Directory (removes directories and all contents)**
 
 DELETE http://localhost:8080/api/v1/some/dir/
+
+## Built with great open source software:
+
+- [node.js](https://nodejs.org/en/)
+- [express](http://expressjs.com/)
+- and many more (see the package.json for dependencies)
