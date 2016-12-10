@@ -49,7 +49,7 @@ These examples all use [httpie](https://httpie.org/).
 - Check the MD5 on the server-side
 - Add some meta-data
 
-```
+```javascript
 bash-4.3$ mkfile -n 1G 1G
 bash-4.3$ http -a admin:changeme -f PUT http://localhost:8080/api/v1/some/nested/directory/1G file@1G md5=`md5 -q 1G` author='Bradley A. Thornton'
 
