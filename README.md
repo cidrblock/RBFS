@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/cidrblock/RBFS.svg?branch=master)](https://travis-ci.org/cidrblock/RBFS)
+
 # RBFS (REST based file-server)
 
 RBFS provides a RESTful, JSON based, interface to a file system.
