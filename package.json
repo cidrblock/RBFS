@@ -24,7 +24,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "export NODE_ENV=test && mocha"
+    "test": "export NODE_ENV=test && mkdir tempdir && mkdir rootdir && mocha"
   },
   "author": "Bradley A. Thornton",
   "license": "MIT",
