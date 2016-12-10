@@ -26,10 +26,10 @@ ssl:
 port: 8080
 
 # Base directory
-baseDirectory: "./rootdir"
+baseDirectory: "./tmp"
 
 # Temp directory for uploads
-tempDirectory: "./tempdir"
+tempDirectory: "./tmp"
 
 # Default create mode
 cmode: "0755"
