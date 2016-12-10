@@ -3,12 +3,12 @@ module.exports = {
   // Response Error
   //
   resError: function (message, raw, res) {
-    console.log(message, raw)
+    //console.log(message, raw)
     res.statusMessage = message;
     if (raw) {
-      res.status(400).json({'message': message + ' ' + raw.message + ' ' + raw.stack })
+      res.status(404).json({'message': message + ' ' + raw.message + ' ' + raw.stack })
     } else {
-      res.status(400).json({'message': message})
+      res.status(404).json({'message': message})
     }
     return false;
   },

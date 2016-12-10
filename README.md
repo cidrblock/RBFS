@@ -312,7 +312,33 @@ Routes with authentication enabled. No username/password provided
       ✓ it should return a 401
     /GET /api/v1/
       ✓ it should return a 401
-    <...>
+<...>
+File.
+  GET /api/v1/file.txt (Non-existent file)
+    ✓ it should return a 404 (38ms)
+  PUT /api/v1/file.txt (Put new file)
+    ✓ it should return a 200 (50ms)
+  GET /api/v1/file.txt (Get file)
+    ✓ it should return a 200 and be text
+  GET /api/v1/md5/file.txt (Get file MD5)
+    ✓ it should return a 200 and be json
+  GET /api/v1/history/file.txt (Get new file history)
+    ✓ it should return a 200 and be json
+  POST /api/v1/file.txt (Overwrite existing file)
+    ✓ it should return a 200
+  GET /api/v1/file.txt (Get modified file)
+    ✓ it should return a 200 and be text
+  GET /api/v1/md5/file.txt (Get modified file MD5)
+    ✓ it should return a 200 and be json
+  GET /api/v1/history/file.txt (Get modified file history)
+    ✓ it should return a 200 and be json
+  DELETE /api/v1/history/file.txt (Delete file)
+    ✓ it should return a 200 and be json
+  GET /api/v1/file.txt (Non-existent file)
+    ✓ it should return a 404
+  GET /api/v1/history/file.txt (Non-existent history)
+    ✓ it should return a 404
+
 ```
 
 ### Configuration

@@ -111,7 +111,7 @@ router.delete(/^(.*)$/, function(req, res, next) {
     }
   })
   .then(function() {
-    common.resSuccess('Deleted.', res);
+    common.resSuccess({ 'message': 'Deleted.' }, res);
   })
   .catch(function (reason) {
     common.resError(reason.message, reason.err, res);
