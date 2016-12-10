@@ -21,7 +21,7 @@ Highlights:
 
 ## Getting Started
 
-The two easiest ways to get up and running are:
+The easiest ways to get up and running are:
 
 Use Docker:
 
@@ -33,7 +33,7 @@ docker run -p 8080:8080 --rm -it rbfs
 
 ```
 
-or straight node.js
+straight node.js
 
 ```
 git clone http://github.com/cidrblock/rbfs
@@ -42,6 +42,32 @@ npm install
 node server.js
 ```
 
+try using [heroku](https://admin:changeme@cidrblock-rbfs.herokuapp.com/api/v1/)
+
+```bash
+date > file.txt && http -a admin:changeme -f PUT http
+s://cidrblock-rbfs.herokuapp.com/api/v1/a/b/c/d/file.txt file@file.txt
+```
+```javascript
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 218
+Content-Type: application/json; charset=utf-8
+Date: Sat, 10 Dec 2016 22:25:46 GMT
+Etag: W/"da-yZydpMugW3MEeRxGULF/xg"
+Server: Cowboy
+Via: 1.1 vegur
+X-Powered-By: Express
+
+{
+    "data": {
+        "history": "http://cidrblock-rbfs.herokuapp.com/api/v1/history/a/b/c/d/file.txt",
+        "md5": "f4a066f5271b66dbb911c892ab0b3488",
+        "url": "http://cidrblock-rbfs.herokuapp.com/api/v1/a/b/c/d/file.txt"
+    },
+    "status": "success"
+}
+```
 ## Examples
 
 These examples all use [httpie](https://httpie.org/).
