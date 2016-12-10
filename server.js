@@ -98,7 +98,7 @@ setInterval(findRemoveSync.bind(config.uploadDir, {age: {seconds: 3600}, ignore:
 // START SERVER
 //
 app.use('/api', require('./routes/api'));
-server.listen(config.PORT, function(){
+server.listen(process.env.PORT || config.PORT, function(){
   // silence during testing please
   if (app.settings.env != 'test') {
     console.log("Express server listening on port " + config.PORT);
