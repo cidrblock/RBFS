@@ -300,6 +300,21 @@ The server provides 3 levels of security:
 2. IP Restrictions: Supports specific IP addresses and ranges. White or black list.
 3. HTTPS Support: Simply supplying a PEM-encoded key and certificate file will require HTTPS requests
 
+### Tests
+
+Run `npm test`.
+
+```
+Routes with authentication enabled. No username/password provided
+    /GET / )
+      ✓ it should return a 401
+    /GET /api/
+      ✓ it should return a 401
+    /GET /api/v1/
+      ✓ it should return a 401
+    <...>
+```
+
 ### Configuration
 
 Configuration management uses [node-config](https://github.com/lorenwest/node-config)
