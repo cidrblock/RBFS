@@ -302,11 +302,35 @@ The server provides 3 levels of security:
 
 ### Configuration
 
-The server uses a settings.yaml file to easily setup how it will run:
+Configuration management uses [node-config](https://github.com/lorenwest/node-config)
 
-`config/settings.yaml`
+The server uses a default.yaml file to provide the run time configuration.
 
-The settings file is documented with the possible values.
+`config/default.yaml`
+
+Configuration files/environment variables are loaded in the following order. [js-yaml](https://github.com/nodeca/js-yaml) is included as a dependancy so yaml files can be used.
+
+```
+default.EXT
+default-{instance}.EXT
+{deployment}.EXT
+{deployment}-{instance}.EXT
+{short_hostname}.EXT
+{short_hostname}-{instance}.EXT
+{short_hostname}-{deployment}.EXT
+{short_hostname}-{deployment}-{instance}.EXT
+{full_hostname}.EXT
+{full_hostname}-{instance}.EXT
+{full_hostname}-{deployment}.EXT
+{full_hostname}-{deployment}-{instance}.EXT
+local.EXT
+local-{instance}.EXT
+local-{deployment}.EXT
+local-{deployment}-{instance}.EXT
+(Finally, custom environment variables can override all files)
+```
+
+The config file is documented with the necessary values.
 
 ### API guide
 

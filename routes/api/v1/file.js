@@ -92,7 +92,7 @@ function getSourceIP(req) {
 function resolveSourceIP(ip) {
   return new Promise( function(resolve, reject) {
     var dns = require('dns')
-    dns.setServers(settings.dnsServers);
+    dns.setServers(config.dnsServers);
     dns.reverse(ip, function(err, domains) {
       if (err) {
         resolve()
@@ -108,7 +108,7 @@ function resolveSourceIP(ip) {
 //
 function retrieveFileHistory(req) {
   return new Promise( function(resolve, reject) {
-    var historyFile = req.absolutePath + settings.historyExtention
+    var historyFile = req.absolutePath + config.historyExtention
     var history = []
     fs.readFile(historyFile,  'utf8', function (err, data) {
       if (!err) {
@@ -174,7 +174,7 @@ function updateFileHistory(details, req) {
 // Set the derived parameters for all methods
 //
 router.all(/^(.*)$/, function(req, res, next) {
-  req.absolutePath = settings.baseDirectory + req.originalUrl
+  req.absolutePath = config.baseDirectory + req.originalUrl
   next()
 });
 
@@ -203,7 +203,7 @@ router.get(/^(.*)$/, function(req, res) {
 router.delete(/^(.*)$/, function(req, res) {
   deleteFile(req.absolutePath)
   .then(function() {
-    return deleteFile(req.absolutePath + settings.historyExtention)
+    return deleteFile(req.absolutePath + config.historyExtention)
   })
   .then(function() {
     var response = {}

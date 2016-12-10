@@ -1,5 +1,5 @@
-var yaml = require('node-yaml')
-global.settings = yaml.readSync('./config/settings.yaml')
+// var yaml = require('node-yaml')
+// global.config = yaml.readSync('./config/config.yaml')
 
 var express = require('express')
 var app = express();
@@ -10,12 +10,14 @@ var basicAuth = require('basic-auth');
 var ipfilter = require('express-ipfilter').IpFilter;
 var IpDeniedError = require('express-ipfilter').IpDeniedError;
 var findRemoveSync = require('find-remove')
+global.config = require('config');
+
 var server
 
 //
 // Determine if SSL is used
 //
-if (global.settings.ssl.key && global.settings.ssl.cert) {
+if (config.ssl.key && config.ssl.cert) {
   // Get CERT
   options = {
     key: fs.readFileSync(config.ssl.cert),
@@ -33,42 +35,39 @@ if (global.settings.ssl.key && global.settings.ssl.cert) {
 // Basic Auth
 //
 //
-// Enable authentication if specified in settings
+// Enable authentication if specified in config
 //
 var auth = function (req, res, next) {
-  if (settings.enableAuthentication) {
-    function unauthorized(res) {
-        res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-        return res.sendStatus(401);
-    };
+  function unauthorized(res) {
+      res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+      return res.sendStatus(401);
+  };
 
-    var user = basicAuth(req);
-    if (!user || !user.name || !user.pass) {
-      return unauthorized(res);
-    };
+  var user = basicAuth(req);
+  if (!user || !user.name || !user.pass) {
+    return unauthorized(res);
+  };
 
-    if (user.name === settings.username && user.pass === settings.password) {
-      return next();
-    } else {
-      return unauthorized(res);
-    }
+  if (user.name === config.username && user.pass === config.password) {
+    return next();
+  } else {
+    return unauthorized(res);
   }
 };
 
 //
 // Auth first
 //
-app.use( auth )
-
+if (config.enableAuthentication) { app.use(auth) }
 //
 // Then whitelist
 //
 var ipFilterOptions = {
-  mode: settings.ipFilterMode,
-  log: settings.ipFilterLog,
-  logLevel: settings.ipFilterLogLevel
+  mode: config.ipFilterMode,
+  log: config.ipFilterLog,
+  logLevel: config.ipFilterLogLevel
 }
-app.use(ipfilter(settings.ipFilter, ipFilterOptions ));
+app.use(ipfilter(config.ipFilter, ipFilterOptions ));
 app.use(function(err, req, res, next) {
   if (err) {
     if(err instanceof IpDeniedError){
@@ -86,20 +85,24 @@ app.use(function(err, req, res, next) {
 //
 
 app.use(formidable({
-  uploadDir: settings.tempDirectory
+  uploadDir: config.tempDirectory
 }));
 
 //
 // Clean the upload directory every hour
 //
 
-setInterval(findRemoveSync.bind(settings.uploadDir, {age: {seconds: 3600}, ignore: '.gitignore' }), 360000)
-
+setInterval(findRemoveSync.bind(config.uploadDir, {age: {seconds: 3600}, ignore: '.gitignore' }), 360000)
 
 //
 // START SERVER
 //
 app.use('/api', require('./routes/api'));
-server.listen(settings.port, function(){
-  console.log("Express server listening on port " + settings.port);
+server.listen(config.port, function(){
+  // silence during testing please
+  if (app.settings.env != 'test') {
+    console.log("Express server listening on port " + config.port);
+  }
 });
+
+module.exports = server; // for testing

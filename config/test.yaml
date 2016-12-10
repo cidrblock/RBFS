@@ -1,0 +1,44 @@
+
+###### Enable HTTP basic authentication
+enableAuthentication: true
+username: admin
+password: changeme
+
+###### IP white and black listing
+# Allowed IP's or ranges
+ipFilter:
+  - "0.0.0.0/0"
+  - "::/0"
+# Set the mode, allow = whitelist, deby = blacklist
+ipFilterMode: allow
+# Log IP list actions to console
+ipFilterLog: true
+# Log level for ipList (all, deny, allow)
+ipFilterLogLevel: deny
+
+###### SSL Config
+# Set key and cert to absolute path if SSL used, false if not
+ssl:
+  key: false
+  cert: false
+
+# Port designation
+port: 8080
+
+# Base directory
+baseDirectory: "./rootdir"
+
+# Temp directory for uploads
+tempDirectory: "./tempdir"
+
+# Default create mode
+cmode: "0755"
+
+# DNS servers for metadata lookups
+dnsServers:
+  - 10.255.0.27
+
+# The extention to add to the history files
+historyExtention: .history.json
+# Include the history files in the directory API calls json response.
+includeHistoryFiles: false

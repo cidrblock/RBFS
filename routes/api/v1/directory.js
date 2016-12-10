@@ -39,7 +39,7 @@ function checkNegativeExistence (file) {
 //
 function createDirectory(dir) {
   return new Promise( function(resolve, reject) {
-    fs.ensureDir(dir, settings.cmode, function (err) {
+    fs.ensureDir(dir, config.cmode, function (err) {
       if (err) {
         reject({ 'message': "Error creating directory", 'err': err});
       } else {
@@ -85,7 +85,7 @@ function emptyDirectory(dir) {
 // Set the derived parameters for all methods
 //
 router.all(/^(.*)$/, function(req, res, next) {
-  req.absolutePath = settings.baseDirectory + req.originalUrl
+  req.absolutePath = config.baseDirectory + req.originalUrl
   next()
 });
 
@@ -94,7 +94,7 @@ router.all(/^(.*)$/, function(req, res, next) {
 //
 router.get(/^(.*)$/, function(req, res, next) {
   var url = (req.secure) ? 'https' : 'http' + '://' + req.headers.host + req.originalBaseUrl
-  var tree = dirTree(url, settings.baseDirectory, req.originalUrl);
+  var tree = dirTree(url, config.baseDirectory, req.originalUrl);
   common.resSuccess(tree, res);
 });
 
