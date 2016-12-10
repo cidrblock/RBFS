@@ -23,7 +23,7 @@ ssl:
   cert: false
 
 # Port designation
-port: 8080
+PORT: 8080
 
 # Base directory
 baseDirectory: "./tmp"

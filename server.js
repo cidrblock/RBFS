@@ -101,7 +101,7 @@ app.use('/api', require('./routes/api'));
 server.listen(config.port, function(){
   // silence during testing please
   if (app.settings.env != 'test') {
-    console.log("Express server listening on port " + config.port);
+    console.log("Express server listening on port " + config.PORT);
   }
 });
 
