@@ -13,6 +13,7 @@ Highlights:
 - IP whitelisting or blacklisting.
 - Store and retrieve the history of file changes.
 - File vs. directory action detection.
+- Automatic mimetype header setting based on extention.
 
 
 ## Getting Started
@@ -26,15 +27,168 @@ git clone http://github.com/cidrblock/rbfs
 cd rbfs && mkdir tempdir && mkdir rootdir
 docker build -t rbfs .
 docker run -p 8080:8080 --rm -it rbfs
+
 ```
 
-or straight node
+or straight node.js
 
 ```
 git clone http://github.com/cidrblock/rbfs
 cd rbfs && mkdir tempdir && mkdir rootdir
 npm install
 node server.js
+```
+
+## Examples
+
+These examples all use [httpie](https://httpie.org/)
+
+### Example from linux:
+- Create and PUT a file in arbitrary folder
+- Check the MD5 on the server-side
+- Add some meta-data
+
+```
+bash-4.3$ mkfile -n 1G 1G
+bash-4.3$ http -a admin:changeme -f PUT http://localhost:8080/api/v1/some/nested/directory/1G file@1G md5=`md5 -q 1G` author='Bradley A. Thornton'
+
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 206
+Content-Type: application/json; charset=utf-8
+Date: Sat, 10 Dec 2016 00:02:00 GMT
+ETag: W/"ce-maKkq8+wpvNGTf/stRwgGA"
+X-Powered-By: Express
+
+{
+    "data": {
+        "history": "http://localhost:8080/api/v1/history/some/nested/directory/1G",
+        "md5": "cd573cfaace07e7949bc0c46028904ff",
+        "url": "http://localhost:8080/api/v1/some/nested/directory/1G"
+    },
+    "status": "success"
+}
+```
+
+See the history
+
+```
+bash-4.3$ http -a admin:changeme http://localhost:8080/api/v1/history/some/nested/directory/1G
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Type: application/json
+Date: Sat, 10 Dec 2016 00:03:26 GMT
+Transfer-Encoding: chunked
+X-Powered-By: Express
+
+[
+    {
+        "action": "created",
+        "humanSize": "1 GB",
+        "md5": "cd573cfaace07e7949bc0c46028904ff",
+        "md5Validated": true,
+        "md5ValidationRequested": true,
+        "modified": "2016-12-10T00:01:57.000Z",
+        "size": 1073741824,
+        "sourceDNSName": "",
+        "sourceIP": "::1",
+        "userData": {
+            "author": "Bradley A. Thornton",
+            "md5": "cd573cfaace07e7949bc0c46028904ff"
+        }
+    }
+]
+```
+
+Get the MD5
+
+```
+bash-4.3$ http -a admin:changeme http://localhost:8080/api/v1/md5/some/nested/directory/1G
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 70
+Content-Type: application/json; charset=utf-8
+Date: Sat, 10 Dec 2016 00:04:17 GMT
+ETag: W/"46-JGlQfGKqF5KYpDQEqLj4HA"
+X-Powered-By: Express
+
+{
+    "data": {
+        "md5": "cd573cfaace07e7949bc0c46028904ff"
+    },
+    "status": "success"
+}
+```
+
+Get a directory listing
+
+```
+bash-4.3$ http -a admin:changeme http://localhost:8080/api/v1/
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 929
+Content-Type: application/json; charset=utf-8
+Date: Sat, 10 Dec 2016 00:05:15 GMT
+ETag: W/"3a1-QdFb8lPBSNE+FmXLACvTBQ"
+X-Powered-By: Express
+
+{
+    "data": {
+        "children": [
+            {
+                "children": [
+                    {
+                        "children": [
+                            {
+                                "children": [
+                                    {
+                                        "extension": "",
+                                        "history": "http://localhost:8080/api/v1/history/some/nested/directory/1G",
+                                        "humanSize": "1 GB",
+                                        "mimeType": "application/octet-stream",
+                                        "modified": "2016-12-10T00:01:57.000Z",
+                                        "name": "1G",
+                                        "path": "/some/nested/directory/1G",
+                                        "size": 1073741824,
+                                        "type": "file",
+                                        "url": "http://localhost:8080/api/v1/some/nested/directory/1G"
+                                    }
+                                ],
+                                "humanSize": "1 GB",
+                                "modified": "2016-12-10T00:02:00.000Z",
+                                "name": "directory",
+                                "path": "/some/nested/directory",
+                                "size": 1073741824,
+                                "type": "directory"
+                            }
+                        ],
+                        "humanSize": "1 GB",
+                        "modified": "2016-12-10T00:01:57.000Z",
+                        "name": "nested",
+                        "path": "/some/nested",
+                        "size": 1073741824,
+                        "type": "directory"
+                    }
+                ],
+                "humanSize": "1 GB",
+                "modified": "2016-12-10T00:01:57.000Z",
+                "name": "some",
+                "path": "/some",
+                "size": 1073741824,
+                "type": "directory"
+            }
+        ],
+        "humanSize": "1 GB",
+        "modified": "2016-12-10T00:01:57.000Z",
+        "name": "",
+        "path": "/",
+        "size": 1073741824,
+        "type": "directory"
+    },
+    "status": "success"
+}
+```
+
 
 
 

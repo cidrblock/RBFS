@@ -28,7 +28,7 @@ function checkExistence (file) {
 function saveFile(req) {
   return new Promise( function(resolve, reject) {
     if (req.files && req.files.file) {
-      fs.rename(req.files.file.path, req.absolutePath, function (err) {
+      fs.move(req.files.file.path, req.absolutePath, function (err) {
       // fs.outputFile(req.absolutePath, req.files.filedata.data, function (err) {
         if (err) {
           reject({'message': "Error writing temporary file.", 'err': err });
