@@ -49,10 +49,11 @@ These examples all use [httpie](https://httpie.org/).
 - Check the MD5 on the server-side
 - Add some meta-data
 
-```javascript
+```bash
 bash-4.3$ mkfile -n 1G 1G
 bash-4.3$ http -a admin:changeme -f PUT http://localhost:8080/api/v1/some/nested/directory/1G file@1G md5=`md5 -q 1G` author='Bradley A. Thornton'
-
+```
+```javascript
 HTTP/1.1 200 OK
 Connection: keep-alive
 Content-Length: 206
@@ -73,8 +74,10 @@ X-Powered-By: Express
 
 #### See the history
 
-```
+```bash
 bash-4.3$ http -a admin:changeme http://localhost:8080/api/v1/history/some/nested/directory/1G
+```
+```javascript
 HTTP/1.1 200 OK
 Connection: keep-alive
 Content-Type: application/json
@@ -103,8 +106,10 @@ X-Powered-By: Express
 
 #### Get the MD5
 
-```
+```bash
 bash-4.3$ http -a admin:changeme http://localhost:8080/api/v1/md5/some/nested/directory/1G
+```
+```javascript
 HTTP/1.1 200 OK
 Connection: keep-alive
 Content-Length: 70
@@ -123,8 +128,10 @@ X-Powered-By: Express
 
 #### Get a directory listing
 
-```
+```bash
 bash-4.3$ http -a admin:changeme http://localhost:8080/api/v1/
+```
+```javascript
 HTTP/1.1 200 OK
 Connection: keep-alive
 Content-Length: 929
@@ -192,8 +199,10 @@ X-Powered-By: Express
 
 #### Delete it all:
 
-```
+```bash
 bash-4.3$ http -a admin:changeme DELETE http://localhost:8080/api/v1/
+```
+```javascript
 HTTP/1.1 200 OK
 Connection: keep-alive
 Content-Length: 38
