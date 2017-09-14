@@ -36,7 +36,7 @@ function directoryTree (urlBase, base, path) {
     item.mimeType = mime.lookup(ext);
 	}
 	else if (stats.isDirectory()) {
-    if (!config.includeDotDirectories && path.startsWith(".")) {
+    if (!config.includeDotDirectories && item.name.startsWith(".")) {
         return null;
       }
 		try {
