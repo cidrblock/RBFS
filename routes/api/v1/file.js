@@ -265,8 +265,8 @@ router.all(/^(.*)$/, function(req, res, next) {
     })
     .then(function() {
       var response = {}
-      response.url = (req.secure) ? 'https' : 'http' + '://' + req.headers.host +  req.originalBaseUrl + req.url
-      response.history = (req.secure) ? 'https' : 'http' + '://' + req.headers.host +  req.originalBaseUrl + '/history' + req.url
+      response.url = ((req.secure) ? 'https' : 'http' ) + '://' + req.headers.host +  req.originalBaseUrl + req.url
+      response.history = ((req.secure) ? 'https' : 'http' ) + '://' + req.headers.host +  req.originalBaseUrl + '/history' + req.url
       response.md5 = details.md5
       common.resSuccess(response, res);
     })

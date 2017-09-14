@@ -129,7 +129,7 @@ router.all(/^(.*)$/, function(req, res) {
     })
     .then(function() {
       var response = {}
-      response.url = (req.secure) ? 'https' : 'http' + '://' + req.headers.host + req.originalBaseUrl + req.url
+      response.url = ((req.secure) ? 'https' : 'http' ) + '://' + req.headers.host + req.originalBaseUrl + req.url
       common.resSuccess(response, res);
     })
     .catch(function (reason) {
