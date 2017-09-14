@@ -93,7 +93,7 @@ router.all(/^(.*)$/, function(req, res, next) {
 // GET a directory tree
 //
 router.get(/^(.*)$/, function(req, res, next) {
-  var url = (req.secure) ? 'https' : 'http' + '://' + req.headers.host + req.originalBaseUrl
+  var url = ((req.secure) ? 'https' : 'http' + '://' ) + req.headers.host + req.originalBaseUrl
   var tree = dirTree(url, config.baseDirectory, req.originalUrl);
   common.resSuccess(tree, res);
 });
