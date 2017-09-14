@@ -42,3 +42,6 @@ dnsServers:
 historyExtention: .history.json
 # Include the history files in the directory API calls json response.
 includeHistoryFiles: false
+
+includeDotDirectories: false
+includeDotFiles: false

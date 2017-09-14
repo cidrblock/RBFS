@@ -24,6 +24,9 @@ function directoryTree (urlBase, base, path) {
       && item.name.endsWith(config.historyExtention)) {
         return null;
       }
+    if (!config.includeDotFiles && item.name.startsWith(".")) {
+          return null;
+      }
 		item.size = stats.size;  // File size in bytes
     item.humanSize = filesize(stats.size);
 		item.extension = ext;
@@ -33,6 +36,9 @@ function directoryTree (urlBase, base, path) {
     item.mimeType = mime.lookup(ext);
 	}
 	else if (stats.isDirectory()) {
+    if (!config.includeDotDirectories && path.startsWith(".")) {
+        return null;
+      }
 		try {
       item.type = 'directory'
 			item.children = FS.readdirSync(base + '/' + path)
