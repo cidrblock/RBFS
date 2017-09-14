@@ -10,6 +10,7 @@ var basicAuth = require('basic-auth');
 var ipfilter = require('express-ipfilter').IpFilter;
 var IpDeniedError = require('express-ipfilter').IpDeniedError;
 var findRemoveSync = require('find-remove')
+var fs = require('fs');
 global.config = require('config');
 
 var server
