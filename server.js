@@ -21,10 +21,9 @@ var server
 if (config.ssl.key && config.ssl.cert) {
   // Get CERT
   options = {
-    key: fs.readFileSync(config.ssl.cert, 'utf8'),
-    cert: fs.readFileSync(config.ssl.key, 'utf8')
+    key: fs.readFileSync(config.ssl.key),
+    cert: fs.readFileSync(config.ssl.cert)
   };
-  console.log(options)
   // Config server with SSL
   server = https.createServer(options, app)
 } else {
