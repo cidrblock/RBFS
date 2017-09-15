@@ -1,9 +1,14 @@
 
 ###### Enable HTTP basic authentication
 enableAuthentication: true
+# excludeMethodsFromAuth:
+#  - GET
+excludeMethodsFromAuth: []
 username: admin
 password: changeme
 
+###### Set the node timeout in mseconds
+timeoutinmsec: 600000 # 10 minutes
 ###### IP white and black listing
 # Allowed IP's or ranges
 ipFilter:

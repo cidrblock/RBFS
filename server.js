@@ -31,7 +31,10 @@ if (config.ssl.key && config.ssl.cert) {
   options = {}
   server = http.createServer(app)
 }
-
+//
+// Set the server timeout
+//
+server.setTimeout(config.timeoutinmsec);
 //
 // Basic Auth
 //
@@ -43,16 +46,19 @@ var auth = function (req, res, next) {
       res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
       return res.sendStatus(401);
   };
-
-  var user = basicAuth(req);
-  if (!user || !user.name || !user.pass) {
-    return unauthorized(res);
-  };
-
-  if (user.name === config.username && user.pass === config.password) {
+  // Exclude methods from config
+  if (config.excludeMethodsFromAuth.includes(req.method)) {
     return next();
   } else {
-    return unauthorized(res);
+    var user = basicAuth(req);
+    if (!user || !user.name || !user.pass) {
+      return unauthorized(res);
+    };
+    if (user.name === config.username && user.pass === config.password) {
+      return next();
+    } else {
+      return unauthorized(res);
+    }
   }
 };
 
